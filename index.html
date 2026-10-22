@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Го в доту?</title>
+<meta name="description" content="Тебя зовут в Dota 2. Отказ не принимается.">
+<meta property="og:title" content="Го в доту?">
+<meta property="og:description" content="Тебя зовут в Dota 2. Отказ не принимается.">
+<meta name="theme-color" content="#0b0a0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0a0d;
+  --text: #f3ece0;
+  --muted: rgba(243, 236, 224, .74);
+  --gold: #e8c27a;
+  --gold-deep: #a8782e;
+  --red: #c8321f;
+  --red-deep: #7a160c;
+  --surface: rgba(12, 10, 14, .58);
+  --line: rgba(232, 194, 122, .28);
+  --error: #ff8a7a;
+  --ok: #9be29b;
+  --radius: 14px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.55 Rubik, system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.bg, .shade, .embers { position: fixed; inset: 0; }
+.bg { width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.shade {
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(0,0,0,.15) 0%, rgba(0,0,0,.55) 60%, rgba(0,0,0,.88) 100%),
+    linear-gradient(180deg, rgba(122,22,12,.18), rgba(0,0,0,.35));
+}
+.embers { z-index: 2; pointer-events: none; overflow: hidden; }
+.ember {
+  position: absolute; bottom: -12px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #ffb35c;
+  box-shadow: 0 0 8px 2px rgba(255, 140, 50, .7);
+  opacity: 0;
+}
+main {
+  position: relative; z-index: 3;
+  min-height: 100dvh;
+  display: grid; place-items: center; grid-template-columns: minmax(0, 1fr);
+  padding: 24px 16px;
+}
+.card {
+  width: 100%; max-width: 540px;
+  padding: 40px 32px 32px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; letter-spacing: .28em; text-transform: uppercase; white-space: nowrap;
+  color: var(--gold);
+}
+.eyebrow::before, .eyebrow::after { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .6; }
+h1 {
+  margin: 18px 0 12px;
+  font: 700 clamp(40px, 9vw, 64px)/1.02 "Cormorant SC", Georgia, serif;
+  letter-spacing: .01em;
+  color: var(--gold);
+  filter: drop-shadow(0 4px 18px rgba(200, 50, 31, .45));
+}
+h1 .w { display: inline-block; white-space: nowrap; }
+h1 .ch {
+  display: inline-block;
+  background: linear-gradient(180deg, #fff3d6 0%, var(--gold) 45%, var(--gold-deep) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.lead { color: var(--muted); max-width: 40ch; margin: 0 auto; }
+.field { margin: 28px auto 0; max-width: 320px; text-align: left; }
+.field label { display: block; font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+.field input {
+  width: 100%; height: 48px; padding: 0 14px;
+  font: inherit; color: var(--text);
+  background: rgba(0,0,0,.45);
+  border: 1px solid var(--line); border-radius: 10px;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,194,122,.25); }
+.field input[aria-invalid="true"] { border-color: var(--error); }
+.field .err { min-height: 20px; margin-top: 6px; font-size: 14px; color: var(--error); }
+.actions { margin-top: 28px; display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.btn {
+  min-width: 148px; height: 56px; padding: 0 28px;
+  font: 700 18px/1 Rubik, sans-serif; letter-spacing: .14em; text-transform: uppercase;
+  border-radius: 12px; border: 1px solid transparent;
+  cursor: pointer; touch-action: manipulation; user-select: none;
+  transition: transform .15s var(--ease), box-shadow .25s var(--ease), filter .2s;
+}
+.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.yes {
+  color: #fff7e6;
+  background: linear-gradient(180deg, #e2523a 0%, var(--red) 50%, var(--red-deep) 100%);
+  border-color: rgba(255, 190, 120, .55);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 10px 30px rgba(200, 50, 31, .55), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.yes:hover { filter: brightness(1.1); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 14px 40px rgba(232, 80, 40, .75), inset 0 1px 0 rgba(255,255,255,.25); }
+.yes:active { transform: scale(.96); }
+.yes[disabled] { cursor: progress; filter: saturate(.6) brightness(.85); }
+.yes .spin {
+  display: none; width: 18px; height: 18px; margin-right: 10px; vertical-align: -3px;
+  border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.yes.loading .spin { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.no {
+  color: var(--muted);
+  background: rgba(0,0,0,.4);
+  border-color: rgba(243,236,224,.22);
+}
+.no.free { position: fixed; left: 0; top: 0; z-index: 50; margin: 0; }
+.spacer { display: inline-block; }
+.taunt { min-height: 24px; margin-top: 16px; font-size: 15px; color: var(--gold); }
+.status { min-height: 22px; margin-top: 8px; font-size: 15px; }
+.status.error { color: var(--error); }
+.done { display: none; margin-top: 28px; }
+.done .big { font: 700 34px/1.1 "Cormorant SC", Georgia, serif; color: var(--ok); }
+.done p { margin-top: 8px; color: var(--muted); }
+[hidden] { display: none !important; }
+@media (max-width: 420px) {
+  .card { padding: 32px 20px 24px; }
+  .btn { min-width: 128px; }
+  .eyebrow { letter-spacing: .18em; gap: 8px; }
+  .eyebrow::before, .eyebrow::after { width: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .embers { display: none; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<video class="bg" src="assets/bg.webm" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+<div class="shade"></div>
+<div class="embers" aria-hidden="true"></div>
+
+<main>
+  <section class="card" aria-labelledby="title">
+    <span class="eyebrow">Приглашение в битву</span>
+    <h1 id="title">Го в доту?</h1>
+    <p class="lead">Лобби уже собирается. Нужен ещё один герой, и это ты.</p>
+
+    <form id="form" novalidate>
+      <div class="field" id="nameField" hidden>
+        <label for="name">Твой ник</label>
+        <input id="name" name="name" autocomplete="nickname" maxlength="40" aria-describedby="nameErr">
+        <div class="err" id="nameErr" role="alert"></div>
+      </div>
+
+      <div class="actions" id="actions">
+        <button class="btn yes" id="yes" type="submit"><span class="spin" aria-hidden="true"></span>Да</button>
+        <button class="btn no" id="no" type="button">Нет</button>
+      </div>
+      <div class="taunt" id="taunt" aria-live="polite"></div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="done" id="done" role="status">
+      <div class="big">Принято!</div>
+      <p>Сообщение отправлено. Заходи в лобби, ждём тебя.</p>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<script>
+const TG = { token: '8730464899:AAHqHLPM_hx60dgu18AWy0ZzqnfWYS34Wj4', chatId: '419381364' };
+const TAUNTS = ['Не-а', 'Мимо', 'Даже не пытайся', 'Кнопка в рошане', 'Промах, как у Пуджа', 'Блинк!', 'Отказ не принимается', 'Ты серьёзно?', 'Жми «Да»'];
+
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const form = $('form'), yes = $('yes'), no = $('no'), input = $('name');
+const nameParam = (new URLSearchParams(location.search).get('name') || '').trim().slice(0, 40);
+
+const title = $('title');
+title.textContent = nameParam ? `${nameParam}, го в доту?` : 'Го в доту?';
+$('nameField').hidden = !!nameParam;
+title.replaceChildren(...title.textContent.split(' ').flatMap((word, i) => {
+  const w = document.createElement('span');
+  w.className = 'w';
+  w.append(...[...word].map(c => Object.assign(document.createElement('span'), { className: 'ch', textContent: c })));
+  return i ? [' ', w] : [w];
+}));
+
+if (!reduce) {
+  anime.timeline({ easing: 'easeOutExpo' })
+    .add({ targets: '.card', opacity: [0, 1], translateY: [40, 0], scale: [.96, 1], duration: 900 })
+    .add({ targets: '.eyebrow', opacity: [0, 1], translateY: [-12, 0], duration: 800 }, '-=600')
+    .add({ targets: 'h1 .ch', opacity: [0, 1], translateY: [30, 0], rotateX: [-80, 0], delay: anime.stagger(30), duration: 700 }, '-=600')
+    .add({ targets: ['.lead', '.field', '.actions .btn'], opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 600 }, '-=500');
+
+  const embers = document.querySelector('.embers');
+  embers.append(...Array.from({ length: 28 }, () => {
+    const e = document.createElement('i');
+    e.className = 'ember';
+    e.style.left = `${Math.random() * 100}%`;
+    return e;
+  }));
+  anime({
+    targets: '.ember',
+    translateY: () => -(innerHeight + 40),
+    translateX: () => anime.random(-90, 90),
+    scale: () => [anime.random(5, 12) / 10, 0.2],
+    opacity: [{ value: 1, duration: 400 }, { value: 0, delay: 2500 }],
+    duration: () => anime.random(5000, 11000),
+    delay: () => anime.random(0, 6000),
+    easing: 'linear',
+    loop: true
+  });
+}
+
+let free = false, busy = false, tauntIdx = -1;
+
+function release() {
+  const r = no.getBoundingClientRect();
+  const spacer = document.createElement('span');
+  spacer.className = 'spacer';
+  spacer.style.width = `${r.width}px`;
+  spacer.style.height = `${r.height}px`;
+  no.replaceWith(spacer);
+  document.body.append(no);
+  no.classList.add('free');
+  anime.set(no, { translateX: r.left, translateY: r.top, opacity: 1 });
+  free = true;
+}
+
+function dodge(px, py) {
+  if (!free) release();
+  const w = no.offsetWidth, h = no.offsetHeight, m = 16;
+  let x, y, i = 0;
+  do {
+    x = anime.random(m, Math.max(m, innerWidth - w - m));
+    y = anime.random(m, Math.max(m, innerHeight - h - m));
+  } while (Math.hypot(x + w / 2 - px, y + h / 2 - py) < Math.min(260, innerWidth / 2) && ++i < 40);
+
+  busy = true;
+  anime.remove(no);
+  anime({
+    targets: no, translateX: x, translateY: y, rotate: anime.random(-14, 14),
+    duration: reduce ? 0 : 380, easing: 'easeOutExpo',
+    complete: () => { busy = false; }
+  });
+
+  tauntIdx = (tauntIdx + 1 + anime.random(0, TAUNTS.length - 2)) % TAUNTS.length;
+  $('taunt').textContent = TAUNTS[tauntIdx];
+}
+
+addEventListener('pointermove', e => {
+  if (busy || no.hidden) return;
+  const r = no.getBoundingClientRect();
+  const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+  const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+  if (Math.hypot(dx, dy) < 80) dodge(e.clientX, e.clientY);
+}, { passive: true });
+
+const dodgeFromSelf = e => {
+  e.preventDefault();
+  const r = no.getBoundingClientRect();
+  dodge(e.clientX ?? r.left + r.width / 2, e.clientY ?? r.top + r.height / 2);
+};
+no.addEventListener('pointerdown', dodgeFromSelf);
+no.addEventListener('click', dodgeFromSelf);
+no.addEventListener('focus', () => { no.blur(); yes.focus(); });
+addEventListener('resize', () => { if (free) dodge(-1e4, -1e4); });
+
+const status = $('status');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = nameParam || input.value.trim();
+  if (!name) {
+    input.setAttribute('aria-invalid', 'true');
+    $('nameErr').textContent = 'Напиши ник, чтобы мы знали, кого ждать';
+    input.focus();
+    if (!reduce) anime({ targets: input, translateX: [0, -8, 8, -6, 6, 0], duration: 400, easing: 'easeInOutSine' });
+    return;
+  }
+  input.removeAttribute('aria-invalid');
+  $('nameErr').textContent = '';
+
+  yes.disabled = true;
+  yes.classList.add('loading');
+  status.className = 'status';
+  status.textContent = 'Отправляем…';
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+      method: 'POST',
+      body: new URLSearchParams({ chat_id: TG.chatId, text: `🎮 ${name} согласен играть в Dota 2!` })
+    });
+    if (!(await res.json()).ok) throw new Error();
+    succeed();
+  } catch {
+    status.className = 'status error';
+    status.textContent = 'Не получилось отправить. Проверь интернет и нажми «Да» ещё раз.';
+    yes.disabled = false;
+    yes.classList.remove('loading');
+  }
+});
+
+function succeed() {
+  status.textContent = '';
+  const hide = [form, no];
+  const show = () => {
+    hide.forEach(el => { el.hidden = true; });
+    $('done').style.display = 'block';
+    if (!reduce) anime({ targets: '#done', opacity: [0, 1], scale: [.9, 1], duration: 700, easing: 'easeOutBack' });
+  };
+  if (reduce) return show();
+  anime({ targets: hide, opacity: 0, scale: .9, duration: 250, easing: 'easeInQuad', complete: show });
+}
+</script>
+</body>
+</html>
